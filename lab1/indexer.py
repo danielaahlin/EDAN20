@@ -1,7 +1,7 @@
 import sys
 import os
 import re
-import pickle 
+import pickle
 
 def get_files(dir, suffix):
     """
@@ -32,8 +32,11 @@ def main(folder):
     for t in txt_files:
         dic = dictionaries('{}/{}'.format(folder, t))
         for d in dic:
-            master_dict[d] = {t: dic[d]}
-    print(master_dict['samlar']['nils.txt'])
+            if d in master_dict:
+                master_dict[d].update({t: dic[d]})
+            else:
+                master_dict[d] = {t: dic[d]}
+    print(master_dict['samlar'])
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
