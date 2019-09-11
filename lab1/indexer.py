@@ -59,7 +59,7 @@ def cosine_similarity(A, B):
     """
     A, B - arrays containing tfidf values
     """
-    return np.dot(A, B) / np.linalg.norm(A) * np.linalg.norm(B)
+    return np.dot(A, B) / (np.linalg.norm(A) * np.linalg.norm(B))
 
 def main(folder):
     master_dict = {}
@@ -102,7 +102,13 @@ def main(folder):
         for y in range(len(array_txt)):
             row.append(cosine_similarity(array_txt[x], array_txt[y]))
         matrix.append(row)
+    print(txt_files)
+    for m in matrix:
+        #m.sort()
+        #print(m[-2])
+        print(m)
 
+    #'troll.txt', 'kejsaren.txt' är mest lika
         
 if __name__ == "__main__":
     if len(sys.argv) == 2:
