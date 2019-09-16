@@ -1,0 +1,5 @@
+- What is the possible number of bigrams and their real number? Explain why such a difference. What would be the possible number of 4-grams.
+Nbr of words - 1, man behöver -1 för att kunna skapa ett bigram? Nbr of words - 3 
+
+- Propose a solution to cope with bigrams unseen in the corpus. This topic will be discussed during the lab session.
+Använder sig av smoothing tekniker för att se till att alla kombinationer har uppkommit en gång även ifall de inte har gjort det i träningssetet. 

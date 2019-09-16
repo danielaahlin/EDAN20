@@ -53,11 +53,14 @@ def tokenize4(text):
 
 def delimiter(text):
     text = text.lower()
+
     spaced_tokens = re.sub('([\p{S}\p{P}])', r' \1 ', text)
     one_token_per_line = re.sub('\s+', '\n', spaced_tokens)
     tokens = one_token_per_line.split()
+    
     not_accepted = "-,\xad#*¨`_»/[]();$}"
     temp = [t for t in tokens if t not in not_accepted]
+    
     first = ["<s>"]
     end_of_sentence = ".!?"
     for t in temp:
@@ -66,17 +69,6 @@ def delimiter(text):
         else:
             first.append(t)
     return first[:-1]
-
-
-
-    #not_accepted = ","
-    # text = "<s>" + text.lower()
-    # dot = re.sub('[\r\n]+', '', text)
-    # dot = re.sub('[\!.?]', " </s>\n<s>", dot)
-    # dot = re.sub('\,', "", dot)
-    # dot =  dot[:-5]
-    # return dot
-    #print(dot)
 
 
 if __name__ == '__main__':

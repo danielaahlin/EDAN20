@@ -37,7 +37,7 @@ def count_unigrams(words):
 
 def sentence_prob(words, sentence):
     freq = count_unigrams(words)
-    prob = 1
+    prob = 1.0
     print("Unigram model")
     print('=' * 50)
     print("wi C(wi) #words P(wi)")
@@ -49,11 +49,10 @@ def sentence_prob(words, sentence):
     print("{}: {}: {}: {}".format("</s>", freq["</s>"], len(words), freq["</s>"]/len(words)))
     print('=' * 50)
     print("Prob. unigrams: {}  ".format(prob))
-    print("Geometric mean prob.: {} ".format(1))
+    root = len(sentence.split()) + 1
+    print("Geometric mean prob.: {} ".format(prob**(1./root)))
     print("Entropy rate: {} ".format("1"))
     print("Perplexity: {} ".format("1"))
-
-
 
 if __name__ == '__main__':
     text = sys.stdin.read()
