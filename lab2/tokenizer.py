@@ -51,13 +51,23 @@ def tokenize4(text):
     tokens = one_token_per_line.split()
     return tokens
 
+def delimiter(text):
+    text = "<s>" + text.lower()
+    dot = re.sub('[\r\n]+', '', text)
+    dot = re.sub('[\!.?]', " </s>\n<s>", dot)
+    dot = re.sub('\,', "", dot)
+    dot =  dot[:-5]
+    
+    print(dot)
+
 
 if __name__ == '__main__':
     text = sys.stdin.read()
-    """words = tokenize(text)
-    for word in words:
-        print(word)
-    words = tokenize2(text)
-    print(words)"""
-    words = tokenize4(text)
-    print(words)
+    #words = tokenize(text)
+    #for word in words:
+    #  print(word)
+    #words = tokenize2(text)
+    #print(words)
+    #words = tokenize4(text)
+    #print(words)
+    delimiter(text)
