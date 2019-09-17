@@ -51,8 +51,10 @@ def sentence_prob(words, sentence):
     print("Prob. unigrams: {}  ".format(prob))
     root = len(sentence.split()) + 1
     print("Geometric mean prob.: {} ".format(prob**(1./root)))
-    print("Entropy rate: {} ".format("1"))
-    print("Perplexity: {} ".format("1"))
+    entropy = math.log2(prob) * (-1 / root)
+    print("Entropy rate: {} ".format(entropy))
+    perplexity = math.pow(2, entropy)
+    print("Perplexity: {} ".format(perplexity))
 
 if __name__ == '__main__':
     text = sys.stdin.read()

@@ -9,7 +9,7 @@ import math
 
 import regex
 import tokenizer
-
+from prob_unigram import count_unigrams
 
 def tokenize(text):
     words = regex.findall("\p{L}+", text)
@@ -36,27 +36,36 @@ def bigrams(words):
 
 def sentence_prob(words, sentence):
     freq = count_bigrams(words)
-    
+    unigram_freq = count_unigrams(words)
+
     sentence_bigrams = bigrams(sentence)
     #print(freq2)
-    
+    non_bigram = 1
     prob = 1
     print("Bigram model")
     print('=' * 50)
     print("wi wi+1 Ci,i+1 C(i) P(wi+1|wi)")
     print('=' * 50)
     for word in sentence_bigrams:
-        prob *= (freq[word]/len(words))
-        print("{}: {}: {}: {}".format(
-            word, freq[word], len(words), freq[word]/len(words)))
-    #prob *= (freq["</s>"]/len(words))
-    #print("{}: {}: {}: {}".format(
-    #    "</s>", freq["</s>"], len(words), freq["</s>"]/len(words)))
+        try:
+            prob *= (freq[word]/unigram_freq[word[0]])
+        except KeyError:
+            non_bigram = unigram_freq[word[1]]/len(words)
+            prob *= non_bigram
+
+        try:
+            print('{} {} {} {} {}'.format(word[0], word[1], freq[word], unigram_freq[word[0]], freq[word]/unigram_freq[word[0]]))
+        except KeyError:
+            print('{} {} {} {} {} *backoff: {}'.format(word[0], word[1], 0, unigram_freq[word[0]], 0.0, non_bigram))
+
     print('=' * 50)
     print("Prob. bigrams: {}  ".format(prob))
-    print("Geometric mean prob.: {} ".format(1))
-    print("Entropy rate: {} ".format("1"))
-    print("Perplexity: {} ".format("1"))
+    root = len(sentence)
+    print("Geometric mean prob.: {} ".format(math.pow(prob, 1./root)))
+    entropy = math.log2(prob) * (-1 / root)
+    print("Entropy rate: {} ".format(entropy))
+    perplexetiy = math.pow(2, entropy)
+    print("Perplexity: {} ".format(perplexetiy))
 
 
 if __name__ == '__main__':
@@ -64,6 +73,5 @@ if __name__ == '__main__':
     words = tokenizer.delimiter(text)
     #frequency = count_bigrams(words)
     sentence = "Det var en gång en katt som hette Nils".lower()
-    words2 = sentence.split()
-    print(words2)
+    words2 = tokenizer.delimiter(sentence)
     sentence_prob(words, words2)

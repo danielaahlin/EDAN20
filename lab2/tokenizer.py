@@ -68,8 +68,11 @@ def delimiter(text):
             first.extend(["</s>", "<s>"])
         else:
             first.append(t)
-    return first[:-1]
-
+    if first[-1] == '<s>':
+        return first[:-1]
+    elif first[-1] != '</s>':
+        first.append('</s>')
+    return first
 
 if __name__ == '__main__':
     text = sys.stdin.read()
