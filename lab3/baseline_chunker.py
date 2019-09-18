@@ -36,7 +36,17 @@ def train(corpus):
     """
     Fill in code to compute the chunk distribution for each part of speech
     """
+    #för varje key -> ['chunk'] +1 osv
+    #{'form': 'this', 'pos': 'DT', 'chunk': 'I-NP'}
+    #{'NN': {}, 'IN': {}, 'DT': {}, 'VBZ': {}, 'RB': {}, 'VBN': {}, 'TO': {}, 'VB': {}, 'JJ': {}, 'NNS': {}, 'NNP': {}, ',': {}, 'CC': {}, 'POS': {}, '.': {}, 'VBP': {}, 'VBG': {}, 'PRP$': {}, 'CD': {}, '``': {}, "''": {}, 'VBD': {}, 'EX': {}, 'MD': {}, '#': {}, '(': {}, '$': {}, ')': {}, 'NNPS': {}, 'PRP': {}, 'JJS': {}, 'WP': {}, 'RBR': {}, 'JJR': {}, 'WDT': {}, 'WRB': {}, 'RBS': {}, 'PDT': {}, 'RP': {}, ':': {}, 'FW': {}, 'WP$': {}, 'SYM': {}, 'UH': {}}
+    for sentence in corpus:
+        for row in sentence:
+            if row['chunk'] in chunk_dist[row['pos']]:
+                chunk_dist[row['pos']][row['chunk']] += 1
+            else:
+                chunk_dist[row['pos']].update({row['chunk']: 1})
 
+    print(chunk_dist)
     # We determine the best association
     pos_chunk = {}
     """
@@ -82,8 +92,8 @@ def eval(predicted):
 
 if __name__ == '__main__':
     column_names = ['form', 'pos', 'chunk']
-    train_file = '../../corpus/conll2000/train.txt'
-    test_file = '../../corpus/conll2000/test.txt'
+    train_file = 'train.txt'
+    test_file = 'test.txt'
 
     train_corpus = conll_reader.read_sentences(train_file)
     train_corpus = conll_reader.split_rows(train_corpus, column_names)
