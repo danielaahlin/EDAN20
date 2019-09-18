@@ -4,7 +4,7 @@ Baseline chunker for CoNLL 2000
 __author__ = "Pierre Nugues"
 
 import conll_reader
-
+import operator
 
 def count_pos(corpus):
     """
@@ -36,9 +36,6 @@ def train(corpus):
     """
     Fill in code to compute the chunk distribution for each part of speech
     """
-    #för varje key -> ['chunk'] +1 osv
-    #{'form': 'this', 'pos': 'DT', 'chunk': 'I-NP'}
-    #{'NN': {}, 'IN': {}, 'DT': {}, 'VBZ': {}, 'RB': {}, 'VBN': {}, 'TO': {}, 'VB': {}, 'JJ': {}, 'NNS': {}, 'NNP': {}, ',': {}, 'CC': {}, 'POS': {}, '.': {}, 'VBP': {}, 'VBG': {}, 'PRP$': {}, 'CD': {}, '``': {}, "''": {}, 'VBD': {}, 'EX': {}, 'MD': {}, '#': {}, '(': {}, '$': {}, ')': {}, 'NNPS': {}, 'PRP': {}, 'JJS': {}, 'WP': {}, 'RBR': {}, 'JJR': {}, 'WDT': {}, 'WRB': {}, 'RBS': {}, 'PDT': {}, 'RP': {}, ':': {}, 'FW': {}, 'WP$': {}, 'SYM': {}, 'UH': {}}
     for sentence in corpus:
         for row in sentence:
             if row['chunk'] in chunk_dist[row['pos']]:
@@ -46,7 +43,6 @@ def train(corpus):
             else:
                 chunk_dist[row['pos']].update({row['chunk']: 1})
 
-    print(chunk_dist)
     # We determine the best association
     pos_chunk = {}
     """
@@ -54,6 +50,9 @@ def train(corpus):
     You will build a dictionary with key values:
     pos_chunk[pos] = most frequent chunk for pos
     """
+    for key in chunk_dist:
+        pos_chunk[key] = max(chunk_dist[key].items(), key=operator.itemgetter(1))[0]
+    # print(pos_chunk)
     return pos_chunk
 
 
