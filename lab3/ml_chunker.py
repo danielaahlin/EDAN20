@@ -31,7 +31,7 @@ def extract_features(sentences, w_size, feature_names):
     return X_l, y_l
 
 
-def extract_features_sent(sentence, w_size, feature_names):
+def extract_features_sent(sentence, w_size, feature_names, training=True):
     """
     Extract the features from one sentence
     returns X and y, where X is a list of dictionaries and
@@ -72,10 +72,9 @@ def extract_features_sent(sentence, w_size, feature_names):
         for j in range(2 * w_size + 1):
             x.append(padded_sentence[i + j][1])
         # The chunks (Up to the word)
-        
-        for j in range(w_size):
-            x.append(padded_sentence[i + j][2])
-
+        if training:
+            for j in range(w_size):
+                x.append(padded_sentence[i + j][2])
         # We represent the feature vector as a dictionary
         X.append(dict(zip(feature_names, x)))
         # The classes are stored in a list
@@ -85,14 +84,24 @@ def extract_features_sent(sentence, w_size, feature_names):
 
 def predict(test_sentences, feature_names, f_out):
     for test_sentence in test_sentences:
-        X_test_dict, y_test = extract_features_sent(test_sentence, w_size, feature_names)
+        X_test_dict, y_test = extract_features_sent(test_sentence, w_size, feature_names, training=False)
+
+        y_vec = ['BOS'] * w_size
+        for x in X_test_dict:
+            x['c_n2'] = y_vec[-2]
+            x['c_n1'] = y_vec[-1]
+            X_test = vec.transform(x)
+            y_test_predicted = classifier.predict(X_test)[0]
+            y_vec.append(y_test_predicted)
+        y_vec = y_vec[w_size:]
+
         # Vectorize the test sentence and one hot encoding
-        X_test = vec.transform(X_test_dict)
+        
         # Predicts the chunks and returns numbers
-        y_test_predicted = classifier.predict(X_test)
+        
         # Appends the predicted chunks as a last column and saves the rows
         rows = test_sentence.splitlines()
-        rows = [rows[i] + ' ' + y_test_predicted[i] for i in range(len(rows))]
+        rows = [rows[i] + ' ' + y_vec[i] for i in range(len(rows))]
         for row in rows:
             f_out.write(row + '\n')
         f_out.write('\n')
@@ -125,7 +134,8 @@ if __name__ == '__main__':
     print("Training the model...")
     # classifier = linear_model.LogisticRegression(penalty='l2', dual=True, solver='liblinear')
     # classifier = linear_model.Perceptron(penalty='l2')
-    classifier = linear_model.LogisticRegression(penalty='l2', dual=False, solver='lbfgs', max_iter=500)
+    # classifier = linear_model.LogisticRegression(penalty='l2', dual=False, solver='lbfgs', max_iter=500)
+    classifier = linear_model.LogisticRegression(penalty='l2', solver='lbfgs', multi_class='auto')
     model = classifier.fit(X, y)
     print(model)
 
