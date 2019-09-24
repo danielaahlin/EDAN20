@@ -1,0 +1,10 @@
+What is the feature vector that corresponds to the ml_chunker.py program? Is it the same Kudoh and Matsumoto used in their experiment?
+- Same, but without chunks
+What is the performance of the chunker?
+- 0.95 
+Remove the lexical features (the words) from the feature vector and measure the performance. You should observe a decrease.
+- 0.92
+What is the classifier used in the program? Try two other classifiers and measure their performance: 
+decision trees, perceptron, support vector machines, etc.. Be aware that support vector machines take a long time to train: up to one hour.
+-   perceptron: 0.88
+    decision tree: 0.95

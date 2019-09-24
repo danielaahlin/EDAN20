@@ -72,10 +72,10 @@ def extract_features_sent(sentence, w_size, feature_names):
         for j in range(2 * w_size + 1):
             x.append(padded_sentence[i + j][1])
         # The chunks (Up to the word)
-        """
+        
         for j in range(w_size):
-            feature_line.append(padded_sentence[i + j][2])
-        """
+            x.append(padded_sentence[i + j][2])
+
         # We represent the feature vector as a dictionary
         X.append(dict(zip(feature_names, x)))
         # The classes are stored in a list
@@ -105,7 +105,8 @@ if __name__ == '__main__':
     test_corpus = 'test.txt'
     w_size = 2  # The size of the context window to the left and right of the word
     feature_names = ['word_n2', 'word_n1', 'word', 'word_p1', 'word_p2',
-                     'pos_n2', 'pos_n1', 'pos', 'pos_p1', 'pos_p2']
+                     'pos_n2', 'pos_n1', 'pos', 'pos_p1', 'pos_p2', 
+                     'c_n2', 'c_n1']
 
     train_sentences = conll_reader.read_sentences(train_corpus)
 
@@ -122,7 +123,9 @@ if __name__ == '__main__':
 
     training_start_time = time.clock()
     print("Training the model...")
-    classifier = linear_model.LogisticRegression(penalty='l2', dual=True, solver='liblinear')
+    # classifier = linear_model.LogisticRegression(penalty='l2', dual=True, solver='liblinear')
+    # classifier = linear_model.Perceptron(penalty='l2')
+    classifier = linear_model.LogisticRegression(penalty='l2', dual=False, solver='lbfgs', max_iter=500)
     model = classifier.fit(X, y)
     print(model)
 
