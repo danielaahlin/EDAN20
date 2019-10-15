@@ -10,9 +10,14 @@ def extract(stack, queue, graph, feature_names, sentence, model_set):
     if model_set == 1:
         pass
     elif model_set == 2:
-        X = ['nil', 'nil', 'nil', 'nil', queue[0][3], queue[1][3], queue[0][1], queue[1][1], False, False]
+        #POS_stack0
+
+        #can-la
+        #can-re
+        X = ['nil', 'nil', 'nil', 'nil', stack[0][3], queue[0][3], stack[0][1], queue[0][1], False, False]
         y = 'sh'
         print('x = {}, y = {}'.format(X,y))
+        #print(queue)
         while len(queue) > 0:
             # if not stack:
             #     print(len(stack))
@@ -32,13 +37,13 @@ def extract(stack, queue, graph, feature_names, sentence, model_set):
             arced = False
             if (top_id, first_id) in graph:
                 arced = True
-                X = []
+                X = createX(stack, queue)
                 y = 'ra.{}'.format(first[7])
                 stack, queue, graph = shift(stack, queue, graph)
             elif (first_id, top_id) in graph:
                 arced = True
                 #'can-la' = True
-                X = []
+                X = createX(stack, queue)
                 y = 'la.{}'.format(top[7])
                 stack, queue, graph = reduce(stack, queue, graph)
             #reduce
@@ -49,7 +54,7 @@ def extract(stack, queue, graph, feature_names, sentence, model_set):
                     if (k_id, first_id) in graph or (first_id, k_id) in graph:
                         reduced = True
                         stack, queue, graph = reduce(stack, queue, graph)
-                        X = []
+                        X = createX(stack, queue)
                         y = 're'
                         #can-re = True
                         #lägga till i features
@@ -57,15 +62,38 @@ def extract(stack, queue, graph, feature_names, sentence, model_set):
                         pass
             #shift
             if not arced and not reduced:
-                # X = [top[4], ]
+                X = createX(stack, queue)
                 y = 'sh'
                 stack, queue, graph = shift(stack, queue, graph)
+            
             print('x = {}, y = {}'.format(X,y))
-
     else:
         pass    
 
     return features
+
+def createX(stack, queue):
+    POS_stack1, word_stack1, POS_queue1, word_queue1 = '', '', '' ,''
+    if len(stack) < 2:
+        POS_stack1 = 'nil'
+        word_stack1 = 'nil'
+    else:
+        POS_stack1 = stack[1][3]
+        word_stack1 = stack[1][1]
+    if len(queue) < 2:
+        POS_queue1 = 'nil'
+        word_queue1 = 'nil'
+    else:
+        POS_queue1 = queue[1][3]
+        word_queue1 = queue[1][1]
+    return [stack[0][3], POS_stack1, stack[0][1], word_stack1, queue[0][3], POS_queue1, queue[0][1], word_queue1]
+
+
+def canLA():
+    pass
+
+def canRA():
+    pass
 
 
 def shift(stack, queue, graph):
