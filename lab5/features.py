@@ -6,11 +6,15 @@ Third set  - POS_stack0, POS_stack1, word_stack0, word_stack1, POS_queue0, POS_q
 """
 
 def extract(stack, queue, graph, feature_names, sentence, model_set):
-    features = {}
+    X_features = {}
+    y_features = {}
     if model_set == 1:
         X = ['nil', 'nil', stack[0][3], stack[0][1], False, False]
         y = 'sh'
-        print('x = {}, y = {}'.format(X,y))
+        
+        X_features.update(zip(feature_names, X))
+        y_features.update(zip('action', y))
+        # print('x = {}, y = {}'.format(X,y))
         while len(queue) > 0:
             top = stack[0]
             first = queue[0]
@@ -23,12 +27,20 @@ def extract(stack, queue, graph, feature_names, sentence, model_set):
                 arced = True
                 X = firstSetX(stack, queue, graph)
                 y = 'ra.{}'.format(first[7])
+                
+                X_features.update(zip(feature_names, X))
+                y_features.update(zip('action', y))
+                
                 stack, queue, graph = shift(stack, queue, graph)
             elif (first_id, top_id) in graph:
                 arced = True
                 #'can-la' = True
                 X = firstSetX(stack, queue, graph)
                 y = 'la.{}'.format(top[7])
+
+                X_features.update(zip(feature_names, X))
+                y_features.update(zip('action', y))
+
                 stack, queue, graph = reduce(stack, queue, graph)
             #reduce
             if not arced:
@@ -40,20 +52,28 @@ def extract(stack, queue, graph, feature_names, sentence, model_set):
                         stack, queue, graph = reduce(stack, queue, graph)
                         X = firstSetX(stack, queue, graph)
                         y = 're'
-                        #can-re = True
-                        #lägga till i features
+
+                        X_features.update(zip(feature_names, X))
+                        y_features.update(zip('action', y))
                     else:    
                         pass
             #shift
             if not arced and not reduced:
                 X = firstSetX(stack, queue, graph)
                 y = 'sh'
+                
+                X_features.update(zip(feature_names, X))
+                y_features.update(zip('action', y))
+                
                 stack, queue, graph = shift(stack, queue, graph)
             
-            print('x = {}, y = {}'.format(X,y))
+            # print('x = {}, y = {}'.format(X,y))
     elif model_set == 2:
         X = ['nil', 'nil', 'nil', 'nil', stack[0][3], queue[0][3], stack[0][1], queue[0][1], False, False]
         y = 'sh'
+
+        X_features.update(zip(feature_names, X))
+        y_features.update(zip('action', y))
         print('x = {}, y = {}'.format(X,y))
         #print(queue)
         while len(queue) > 0:
@@ -69,12 +89,20 @@ def extract(stack, queue, graph, feature_names, sentence, model_set):
                 arced = True
                 X = secondSetX(stack, queue, graph)
                 y = 'ra.{}'.format(first[7])
+                
+                X_features.update(zip(feature_names, X))
+                y_features.update(zip('action', y))
+                
                 stack, queue, graph = shift(stack, queue, graph)
             elif (first_id, top_id) in graph:
                 arced = True
                 #'can-la' = True
                 X = secondSetX(stack, queue, graph)
                 y = 'la.{}'.format(top[7])
+
+                X_features.update(zip(feature_names, X))
+                y_features.update(zip('action', y))
+
                 stack, queue, graph = reduce(stack, queue, graph)
             #reduce
             if not arced:
@@ -86,6 +114,9 @@ def extract(stack, queue, graph, feature_names, sentence, model_set):
                         stack, queue, graph = reduce(stack, queue, graph)
                         X = secondSetX(stack, queue, graph)
                         y = 're'
+
+                        X_features.update(zip(feature_names, X))
+                        y_features.update(zip('action', y))
                         #can-re = True
                         #lägga till i features
                     else:    
@@ -94,6 +125,10 @@ def extract(stack, queue, graph, feature_names, sentence, model_set):
             if not arced and not reduced:
                 X = secondSetX(stack, queue, graph)
                 y = 'sh'
+
+                X_features.update(zip(feature_names, X))
+                y_features.update(zip('action', y))
+                
                 stack, queue, graph = shift(stack, queue, graph)
             
             print('x = {}, y = {}'.format(X,y))
@@ -101,7 +136,10 @@ def extract(stack, queue, graph, feature_names, sentence, model_set):
                 
         X = ['nil', 'nil', 'nil', 'nil', stack[0][3], queue[0][3], stack[0][1], queue[0][1], False, False]
         y = 'sh'
-        print('x = {}, y = {}'.format(X,y))
+
+        X_features.update(zip(feature_names, X))
+        y_features.update(zip('action', y))
+        # print('x = {}, y = {}'.format(X,y))
         #print(queue)
         while len(queue) > 0:
             #     #lägg till saker i features
@@ -116,12 +154,20 @@ def extract(stack, queue, graph, feature_names, sentence, model_set):
                 arced = True
                 X = thirdSetX(stack, queue, graph)
                 y = 'ra.{}'.format(first[7])
+
+                X_features.update(zip(feature_names, X))
+                y_features.update(zip('action', y))
+
                 stack, queue, graph = shift(stack, queue, graph)
             elif (first_id, top_id) in graph:
                 arced = True
                 #'can-la' = True
                 X = thirdSetX(stack, queue, graph)
                 y = 'la.{}'.format(top[7])
+
+                X_features.update(zip(feature_names, X))
+                y_features.update(zip('action', y))
+
                 stack, queue, graph = reduce(stack, queue, graph)
             #reduce
             if not arced:
@@ -133,6 +179,10 @@ def extract(stack, queue, graph, feature_names, sentence, model_set):
                         stack, queue, graph = reduce(stack, queue, graph)
                         X = thirdSetX(stack, queue, graph)
                         y = 're'
+
+                        X_features.update(zip(feature_names, X))
+                        y_features.update(zip('action', y))
+
                         #can-re = True
                         #lägga till i features
                     else:    
@@ -141,15 +191,19 @@ def extract(stack, queue, graph, feature_names, sentence, model_set):
             if not arced and not reduced:
                 X = thirdSetX(stack, queue, graph)
                 y = 'sh'
+
+                X_features.update(zip(feature_names, X))
+                y_features.update(zip('action', y))
+
                 stack, queue, graph = shift(stack, queue, graph)
             
-            print('x = {}, y = {}'.format(X,y))
+            # print('x = {}, y = {}'.format(X,y))
 
-    return features
+    return X_features, y_features
     
 
 def firstSetX(stack, queue, graph):
-    return [stack[0][3], stack[0][1], queue[0][3], queue[0][1], canLA(int(stack[0][0]), int(queue[0][0])), canRe(stack, int(queue[0][0]), graph)]
+    return [stack[0][3], stack[0][1], queue[0][3], queue[0][1], canLA(int(stack[0][0]), int(queue[0][0]), stack, graph), canRe(stack, int(queue[0][0]), graph)]
 
 def secondSetX(stack, queue, graph):
     POS_stack1, word_stack1, POS_queue1, word_queue1 = '', '', '', ''
@@ -165,7 +219,8 @@ def secondSetX(stack, queue, graph):
     else:
         POS_queue1 = queue[1][3]
         word_queue1 = queue[1][1]
-    return [stack[0][3], POS_stack1, stack[0][1], word_stack1, queue[0][3], POS_queue1, queue[0][1], word_queue1, canLA(int(stack[0][0]), int(queue[0][0])), canRe(stack, int(queue[0][0]), graph)]
+    return [stack[0][3], POS_stack1, stack[0][1], word_stack1, queue[0][3], POS_queue1, queue[0][1], 
+    word_queue1, canRe(stack, int(queue[0][0]), graph), canLA(int(stack[0][0]), int(queue[0][0]), stack, graph)]
 
 def thirdSetX(stack, queue, graph):
     POS_stack1, word_stack1, POS_queue1, word_queue1, POS_sentece_order, wordform_sentence_order = '', '', '', '', '', ''
@@ -190,15 +245,17 @@ def thirdSetX(stack, queue, graph):
     else:
         POS_queue1 = queue[1][3]
         word_queue1 = queue[1][1]
-    return [stack[0][3], POS_stack1, stack[0][1], word_stack1, queue[0][3], POS_queue1, queue[0][1], word_queue1, canLA(int(stack[0][0]), int(queue[0][0])), canRe(stack, int(queue[0][0]), graph), POS_sentece_order, wordform_sentence_order]
+    return [stack[0][3], POS_stack1, stack[0][1], word_stack1, queue[0][3], POS_queue1, queue[0][1], 
+    word_queue1, canLA(int(stack[0][0]), int(queue[0][0]), stack, graph), canRe(stack, int(queue[0][0]), graph), POS_sentece_order, wordform_sentence_order]
 
 
 
-def canLA(top, first):
-    if top > first:
-        return True
-    else:
+def canLA(top, first, stack, graph):
+    if top == 0:
         return False
+    if top > first or not canRe(stack, first, graph):
+        return True
+    return False
 
 def canRe(stack, first_id, graph):
     for k in stack:
@@ -206,9 +263,6 @@ def canRe(stack, first_id, graph):
             return True
     
     return False
-            
-    
-
 
 def shift(stack, queue, graph):
     stack = [queue[0]] + stack
@@ -217,6 +271,12 @@ def shift(stack, queue, graph):
 
 def reduce(stack, queue, graph):
     return stack[1:], queue, graph
+
+
+# def parse_ml(stack, queue, graph, trans):
+    # if stack and trans[:2] == 'ra':
+        # stack, queue, graph = transition.right_arc(stack, queue, graph, trans[3:])
+        # return stack, queue, graph, 'ra'
 
 if __name__ == "__main__":
     first_set = ['POS_stack', 'POS_queue', 'word_stack', 'word_queue', 'can-la', 'can-re']
@@ -235,7 +295,18 @@ if __name__ == "__main__":
             if line == []:
                 root = ['0', 'ROOT', 'ROOT', 'ROOT', 'ROOT', 'ROOT', '0', 'ROOT', '0', 'ROOT']
                 stack = [root]
-                features = extract(stack, sentence, graph, second_set, sentence, 2)
+                print(len(sentence))
+                # for s in sentence:
+                #     print(s)
+                #     tup = (int(s[6]), int(s[0]))
+                #     print(tup)
+                #     graph.append(tup)
+                #     print(graph)
+                # print(len(graph))
+                X_features, y_features = extract(stack, sentence, graph, second_set, sentence, 2)
+                graph = []
+                sentence = []
+                stack = []
                 break
             else:
                 graph.append((int(line[6]), int(line[0])))
